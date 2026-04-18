@@ -1,7 +1,9 @@
-const userModel = require("../models/user.model")
-const bcrypt = require("bcryptjs")
-const jwt = require("jsonwebtoken")
-const { redisClient } = require("../config/database");
+import { Request, Response, CookieOptions } from "express";
+import userModel from "../models/user.model.js"
+import bcrypt from "bcryptjs"
+import jwt from "jsonwebtoken"
+import { redisClient } from "../config/database.js";
+import { CustomJwtPayload } from "../types/express/index.js";
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -10,7 +12,7 @@ const cookieOptions = {
   secure: isProduction, // true in production (HTTPS)
   sameSite: isProduction ? "none" : "lax", // in production sameSite should be none, and in development it can be lax
   path: "/",
-};
+} satisfies CookieOptions;
 
 /**
  * @name registerUserController
@@ -19,7 +21,7 @@ const cookieOptions = {
  * @access Public
  */
 
-async function registerUserController(req, res) {
+async function registerUserController(req: Request, res: Response) {
     try {
         const { username, email, password } = req.body
         if (!username || !email || !password) {
@@ -40,7 +42,7 @@ async function registerUserController(req, res) {
         })
 
         //here we create a token for the user
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" })
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET as string, { expiresIn: "1d" })
 
         //here we set the token in the cookie
         res.cookie("token", token, cookieOptions)
@@ -65,7 +67,7 @@ async function registerUserController(req, res) {
  * @access Public
  */
 
-async function loginUserController(req, res) {
+async function loginUserController(req: Request, res: Response) {
     try {
         const { email, password } = req.body
         if (!email || !password) {
@@ -81,7 +83,7 @@ async function loginUserController(req, res) {
         }
 
         //here we create a token for the user
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" })
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET as string, { expiresIn: "1d" }) 
         //here we set the token in the cookie
         res.cookie("token", token, cookieOptions)
         res.status(200).json({
@@ -103,7 +105,7 @@ async function loginUserController(req, res) {
  * @description Logout user
  * @access Private
  */
-async function logoutUserController(req, res) {
+async function logoutUserController(req: Request, res: Response) {
     try {
         const token = req.cookies.token;
 
@@ -114,7 +116,7 @@ async function logoutUserController(req, res) {
         //here we decode the token to get the expiry time
         let decoded;   //we have declared it outside the try block so that it is accessible outside the try block
         try {
-            decoded = jwt.verify(token, process.env.JWT_SECRET);
+            decoded = jwt.verify(token, process.env.JWT_SECRET as string) as CustomJwtPayload;
         } catch (error) {
             //if the token is invalid or expired, we clear the token from the cookie and return
             res.clearCookie("token", cookieOptions);
@@ -122,7 +124,7 @@ async function logoutUserController(req, res) {
         }
 
         const currentTime = Math.floor(Date.now() / 1000);
-        const timeRemaining = decoded.exp - currentTime;
+        const timeRemaining = (decoded.exp || 0) - currentTime;
 
         //here we add the token to the blacklist if not expired
         if (timeRemaining > 0) {
@@ -153,9 +155,9 @@ async function logoutUserController(req, res) {
  * @description Get current user data
  * @access Private
  */
-async function userProfileController(req, res) {
+async function userProfileController(req: Request, res: Response) {
     try {
-        const user = await userModel.findById(req.user.id)
+        const user = await userModel.findById(req.user?.id)
         if (!user) {
             return res.status(404).json({ message: "User not found" })
         }
@@ -172,4 +174,4 @@ async function userProfileController(req, res) {
     }
 }
 
-module.exports = { registerUserController, loginUserController, logoutUserController, userProfileController }
+export default { registerUserController, loginUserController, logoutUserController, userProfileController }

@@ -1,12 +1,9 @@
-const jwt = require("jsonwebtoken")
-const { redisClient } = require("../config/database")
+import jwt from "jsonwebtoken"
+import { redisClient } from "../config/database.js"
+import { Request, Response, NextFunction } from "express";
+import { CustomJwtPayload } from "../types/express/index.js";
 
-const cookieOptions = {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    path: "/",
-};
+
 
 /**
  * @name authUserMiddleware
@@ -14,7 +11,7 @@ const cookieOptions = {
  * @access Private
  */
 
-async function authUserMiddleware(req, res, next) {
+async function authUserMiddleware(req: Request, res: Response, next: NextFunction) {
     try {
         const token = req.cookies.token;
         if (!token) {
@@ -26,7 +23,7 @@ async function authUserMiddleware(req, res, next) {
             return res.status(401).json({ message: "Unauthorized" });
         }
         //here we verify the token
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as CustomJwtPayload;
         req.user = decoded;
         next();
     } catch (error) {
@@ -35,4 +32,4 @@ async function authUserMiddleware(req, res, next) {
     }
 }
 
-module.exports = authUserMiddleware
+export default authUserMiddleware

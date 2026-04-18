@@ -1,7 +1,7 @@
-const express = require('express');
-const authRouter = require("./routes/auth.routes")
-const cookieParser = require("cookie-parser");
-const cors = require("cors");
+import express from 'express';
+import authRouter from "./routes/auth.routes.js"
+import cookieParser from "cookie-parser";
+import cors from "cors";
 
 
 
@@ -22,4 +22,4 @@ app.use("/api/auth", authRouter)
 
 
 
-module.exports= app
+export default app

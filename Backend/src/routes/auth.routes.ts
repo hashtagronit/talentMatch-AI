@@ -1,10 +1,10 @@
-const {Router} = require("express")
+import {Router} from "express"
 
 const authRouter = Router()
 
-const authController = require("../controllers/auth.controller") 
+import authController from "../controllers/auth.controller.js"
 
-const authUserMiddleware = require("../middlewares/auth.middleware")
+import authUserMiddleware from "../middlewares/auth.middleware.js"
 
 
 
@@ -41,6 +41,4 @@ authRouter.post("/logout", authUserMiddleware, authController.logoutUserControll
 
 authRouter.get("/userProfile", authUserMiddleware,authController.userProfileController)
 
-
-
-module.exports= authRouter
+export default authRouter

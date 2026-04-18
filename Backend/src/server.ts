@@ -1,6 +1,6 @@
-require("dotenv").config();
-const app = require("./src/app");
-const { connectDB, redisClient } = require("./src/config/database");
+import "dotenv/config";
+import app from "./app.js";
+import { connectDB, redisClient } from "./config/database.js";
 
 const startServer = async () => {
   try {
