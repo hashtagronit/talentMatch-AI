@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 import { redisClient } from "../config/database.js";
 import { CustomJwtPayload } from "../types/express/index.js";
+import { SignInInput, SignUpInput } from "../types/express/auth.types.js";
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -23,7 +24,7 @@ const cookieOptions = {
 
 async function registerUserController(req: Request, res: Response) {
     try {
-        const { username, email, password } = req.body
+        const { username, email, password } = req.validatedBody as SignUpInput
         if (!username || !email || !password) {
             return res.status(400).json({ message: "All fields are required" })
         }
@@ -69,7 +70,7 @@ async function registerUserController(req: Request, res: Response) {
 
 async function loginUserController(req: Request, res: Response) {
     try {
-        const { email, password } = req.body
+        const { email, password } = req.validatedBody as SignInInput
         if (!email || !password) {
             return res.status(400).json({ message: "All fields are required" })
         }

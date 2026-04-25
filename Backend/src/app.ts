@@ -1,5 +1,6 @@
 import express from 'express';
 import authRouter from "./routes/auth.routes.js"
+import interviewRouter from "./routes/interview.routes.js"
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
@@ -19,6 +20,7 @@ app.use(cors({
 }));
 
 app.use("/api/auth", authRouter)
+app.use("/api/interview", interviewRouter)
 
 
 

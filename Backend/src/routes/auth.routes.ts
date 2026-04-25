@@ -5,6 +5,9 @@ const authRouter = Router()
 import authController from "../controllers/auth.controller.js"
 
 import authUserMiddleware from "../middlewares/auth.middleware.js"
+import validateMiddleware from "../middlewares/validate.middleware.js"
+
+import { signInInputSchema, signUpInputSchema } from "../schemas/auth.validator.js";
 
 
 
@@ -15,7 +18,7 @@ import authUserMiddleware from "../middlewares/auth.middleware.js"
  * @access Public
  */
 
-authRouter.post("/register", authController.registerUserController)
+authRouter.post("/register", validateMiddleware(signUpInputSchema), authController.registerUserController)
 
 /**
  * @route POST /api/auth/login
@@ -23,7 +26,7 @@ authRouter.post("/register", authController.registerUserController)
  * @access Public
  */
 
-authRouter.post("/login", authController.loginUserController)
+authRouter.post("/login", validateMiddleware(signInInputSchema), authController.loginUserController)
 
 /**
  * @route POST /api/auth/logout

@@ -8,9 +8,16 @@ declare module "express-serve-static-core" {
   }
 }
 
+declare module "express-serve-static-core" {
+  interface Request {
+    validatedBody?: unknown;
+  }
+}
+
 
 export interface CustomJwtPayload extends JwtPayload {
   id: string;
   exp?: number;
   iat?: number;
 }
+

@@ -32,4 +32,5 @@ async function authUserMiddleware(req: Request, res: Response, next: NextFunctio
     }
 }
 
+
 export default authUserMiddleware

@@ -1,8 +1,8 @@
-import { logOutUser } from "@/api/auth/logOutUser";
 import { useState } from "react";
+import { logOutUser } from "@/api/auth/logOutUser";
 
-export const useLogout = () => {
-    
+
+export const useLogout = () => {   
     const [loading, setLoading] = useState(false);
 
     const handleLogout = async () => {
